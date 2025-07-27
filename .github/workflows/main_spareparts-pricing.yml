@@ -1,4 +1,4 @@
-name: Deploy Azure Function - spareparts-pricing
+name: Build and deploy Python project to Azure Function App - spareparts-pricing
 
 on:
   push:
@@ -13,25 +13,32 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python version
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install dependencies
-        run: pip install -r Azure_Function/onedrive-function/read_excel/requirements.txt
+      - name: Create and activate virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
 
-      - name: Zip project
+      - name: Install dependencies
+        run: pip install -r Azure_Function/onedrive-function/requirements.txt
+
+      - name: Zip artifact for deployment
         run: |
           cd Azure_Function/onedrive-function
           zip -r ../../../release.zip .
 
-      - name: Upload artifact
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: python-app
@@ -42,16 +49,17 @@ jobs:
     needs: build
 
     steps:
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: python-app
 
-      - name: Unzip artifact
+      - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      - name: Deploy to Azure Function
+      - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
+        id: deploy-to-function
         with:
           app-name: 'spareparts-pricing'
           slot-name: 'Production'
