@@ -1,4 +1,4 @@
-name: Build and deploy Python project to Azure Function App - spareparts-pricing
+name: Deploy Azure Function - spareparts-pricing
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r Azure_Function/onedrive-function/read_excel/requirements.txt
 
-      - name: Zip artifact
+      - name: Zip project
         run: |
           cd Azure_Function/onedrive-function
           zip -r ../../../release.zip .
