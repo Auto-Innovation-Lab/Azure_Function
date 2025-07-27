@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'onedrive-function'  # Ruta al proyecto
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'Azure_Function/onedrive-function'  # 👈 corrige esta ruta base
   PYTHON_VERSION: '3.12'
 
 jobs:
@@ -20,27 +20,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python version
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-            - name: Install dependencies
+      - name: Create and activate virtual environment
         run: |
-          FILE="onedrive-function/read_excel/requirements.txt"
-          if [ -f "$FILE" ]; then
-            pip install -r "$FILE"
-          else
-            echo "⚠️ Requisitos no encontrados en $FILE"
-          fi
+          python -m venv venv
+          source venv/bin/activate
 
+      - name: Install dependencies
+        run: pip install -r Azure_Function/onedrive-function/read_excel/requirements.txt  # ✅ ruta correcta
 
       - name: Zip artifact for deployment
         run: |
-          cd onedrive-function
-          zip -r ../release.zip .
+          cd Azure_Function/onedrive-function
+          zip -r ../../../release.zip .
 
-      - name: Upload artifact
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: python-app
@@ -51,16 +49,17 @@ jobs:
     needs: build
 
     steps:
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: python-app
 
-      - name: Unzip artifact
+      - name: Unzip artifact for deployment
         run: unzip release.zip
 
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
+        id: deploy-to-function
         with:
           app-name: 'spareparts-pricing'
           slot-name: 'Production'
