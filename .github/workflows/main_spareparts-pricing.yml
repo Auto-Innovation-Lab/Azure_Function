@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'onedrive-function/read_excel'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'onedrive-function' # ahora apunta correctamente a la carpeta del proyecto
   PYTHON_VERSION: '3.12'
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Create and start virtual environment
+      - name: Create and activate virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
@@ -34,15 +34,15 @@ jobs:
         run: pip install -r onedrive-function/read_excel/requirements.txt
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        run: |
+          cd onedrive-function
+          zip -r ../release.zip .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -63,5 +63,5 @@ jobs:
         with:
           app-name: 'spareparts-pricing'
           slot-name: 'Production'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          package: '.'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_39C3DCB63E3B444899D3F6CC70C59787 }}
