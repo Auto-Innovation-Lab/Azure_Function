@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'onedrive-function'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'onedrive-function'  # Ruta al proyecto
   PYTHON_VERSION: '3.12'
 
 jobs:
@@ -20,23 +20,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python version
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-            - name: Install dependencies
+      - name: Install dependencies
         run: |
-          cd onedrive-function/read_excel
-          pip install -r requirements.txt
-
+          pip install -r onedrive-function/requirements.txt
 
       - name: Zip artifact for deployment
         run: |
           cd onedrive-function
           zip -r ../release.zip .
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: python-app
@@ -47,17 +45,16 @@ jobs:
     needs: build
 
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: python-app
 
-      - name: Unzip artifact for deployment
+      - name: Unzip artifact
         run: unzip release.zip
 
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
-        id: deploy-to-function
         with:
           app-name: 'spareparts-pricing'
           slot-name: 'Production'
