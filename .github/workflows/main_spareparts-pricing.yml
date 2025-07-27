@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'Azure_Function/onedrive-function'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'  # raíz del repo
   PYTHON_VERSION: '3.12'
 
 jobs:
@@ -31,12 +31,11 @@ jobs:
           source venv/bin/activate
 
       - name: Install dependencies
-        run: pip install -r Azure_Function/onedrive-function/requirements.txt
+        run: pip install -r requirements.txt  # porque ahora está en la raíz
 
       - name: Zip artifact for deployment
         run: |
-          cd Azure_Function/onedrive-function
-          zip -r ../../release.zip .
+          zip -r release.zip .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -59,7 +58,6 @@ jobs:
 
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
-        id: deploy-to-function
         with:
           app-name: 'spareparts-pricing'
           slot-name: 'Production'
