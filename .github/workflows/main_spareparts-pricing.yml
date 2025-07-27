@@ -7,14 +7,14 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'  # Ruta base del repo donde está la carpeta read_excel/
-  PYTHON_VERSION: '3.12'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # Ruta al proyecto, por defecto la raíz
+  PYTHON_VERSION: '3.12' # Versión de Python deseada
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read  # Requerido para acciones de checkout
+      contents: read
 
     steps:
       - name: Checkout repository
@@ -25,26 +25,22 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Create and start virtual environment
+      - name: Create virtual environment and install dependencies
         run: |
           python -m venv venv
           source venv/bin/activate
+          pip install -r "${{ github.workspace }}/requirements.txt"
 
-      - name: Install dependencies
-        run: pip install -r ${{ github.workspace }}/requirements.txt
-
-
-      # Optional: Run tests (puedes agregar aquí si tienes)
-
-      - name: Zip project folder
-        run: |
-          zip -r release.zip . -x "venv/*" -x ".git/*" -x ".github/*"
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: release.zip
+          path: |
+            release.zip
+            !venv/
 
   deploy:
     runs-on: ubuntu-latest
@@ -59,11 +55,11 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      - name: 'Deploy to Azure Functions'
+      - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         id: deploy-to-function
         with:
-          app-name: 'spareparts-pricing'  # Asegúrate que este sea el nombre real de tu Azure Function App
+          app-name: 'spareparts-pricing'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_39C3DCB63E3B444899D3F6CC70C59787 }}
