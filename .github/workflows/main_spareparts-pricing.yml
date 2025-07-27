@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'Azure_Function/onedrive-function'  # Ruta correcta a la carpeta del proyecto
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'Azure_Function/onedrive-function'
   PYTHON_VERSION: '3.12'
 
 jobs:
@@ -36,7 +36,7 @@ jobs:
       - name: Zip artifact for deployment
         run: |
           cd Azure_Function/onedrive-function
-          zip -r ../../../release.zip .
+          zip -r ../../release.zip .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
