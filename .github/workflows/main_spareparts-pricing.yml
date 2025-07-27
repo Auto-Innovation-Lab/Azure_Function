@@ -7,14 +7,14 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'  # El ZIP contendrá solo la carpeta de la función
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'  # Ruta base del repo donde está la carpeta read_excel/
   PYTHON_VERSION: '3.12'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read  # Requerido para acciones de checkout
 
     steps:
       - name: Checkout repository
@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Create and activate virtual environment
+      - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
@@ -33,11 +33,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # ✅ Zip solo la carpeta con el código de la Function
-      - name: Zip function folder only
+      # Optional: Run tests (puedes agregar aquí si tienes)
+
+      - name: Zip project folder
         run: |
-          cd onedrive-function
-          zip -r ../release.zip .
+          zip -r release.zip . -x "venv/*" -x ".git/*" -x ".github/*"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -58,11 +58,11 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      - name: Deploy to Azure Functions
+      - name: 'Deploy to Azure Functions'
         uses: Azure/functions-action@v1
         id: deploy-to-function
         with:
-          app-name: 'spareparts-pricing'  # ⚠️ nombre exacto de tu Function App en Azure
+          app-name: 'spareparts-pricing'  # Asegúrate que este sea el nombre real de tu Azure Function App
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_39C3DCB63E3B444899D3F6CC70C59787 }}
