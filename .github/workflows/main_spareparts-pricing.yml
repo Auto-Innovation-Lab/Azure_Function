@@ -7,12 +7,13 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'onedrive-function'  # carpeta raíz de tu Function
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'Azure_Function/onedrive-function'
   PYTHON_VERSION: '3.12'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -23,12 +24,12 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: pip install -r onedrive-function/read_excel/requirements.txt
+        run: pip install -r Azure_Function/onedrive-function/read_excel/requirements.txt
 
       - name: Zip artifact
         run: |
-          cd onedrive-function
-          zip -r ../release.zip .
+          cd Azure_Function/onedrive-function
+          zip -r ../../../release.zip .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -39,6 +40,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
