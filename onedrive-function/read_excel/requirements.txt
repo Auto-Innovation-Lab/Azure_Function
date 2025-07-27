@@ -1,5 +1,0 @@
-requests
-msal
-pandas
-openpyxl
-azure-functions
