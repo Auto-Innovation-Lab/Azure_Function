@@ -25,9 +25,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install dependencies
+            - name: Install dependencies
         run: |
-          pip install -r onedrive-function/requirements.txt
+          FILE="onedrive-function/read_excel/requirements.txt"
+          if [ -f "$FILE" ]; then
+            pip install -r "$FILE"
+          else
+            echo "⚠️ Requisitos no encontrados en $FILE"
+          fi
+
 
       - name: Zip artifact for deployment
         run: |
