@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'onedrive-function/read_excel'  # Ruta a tu función
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'onedrive-function/read_excel'
   PYTHON_VERSION: '3.12'
 
 jobs:
