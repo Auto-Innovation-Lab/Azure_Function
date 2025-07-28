@@ -1,6 +1,6 @@
-azure-functions
 pandas
-openpyxl
-msal
-requests
 numpy
+openpyxl
+requests
+msal
+azure-functions
