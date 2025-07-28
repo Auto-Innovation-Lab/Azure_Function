@@ -7,6 +7,18 @@ from email.mime.multipart import MIMEMultipart
 
 # Carga y filtrado de datos
 def cargar_datos(paths):
+    import openpyxl
+import logging
+
+# Abrir el archivo descargado desde OneDrive
+try:
+    wb = openpyxl.load_workbook(paths['contactos'], read_only=True)
+    hojas = wb.sheetnames
+    logging.info(f"📄 Hojas encontradas en el archivo de contactos: {hojas}")
+    wb.close()
+except Exception as e:
+    logging.error(f"❌ Error leyendo las hojas del archivo Excel: {e}")
+    raise
     df_contactos = pd.read_excel(paths['contactos'], sheet_name='GM CL', header=1)
     df_links = pd.read_excel(paths['disparo'], sheet_name='CL', header=2)
     return df_contactos, df_links
