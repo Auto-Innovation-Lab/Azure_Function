@@ -61,7 +61,7 @@ def cargar_excel_desde_onedrive(shared_url, nombre_local, access_token):
 # === URLS DE ARCHIVOS EXCEL EN ONEDRIVE ===
 onedrive_urls = {
     "contactos_prueba": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/EX784WzxA2VLrrF_EbI4Qo0BDW5N9j07Iogq0Piqg_4Dbg",
-    "contactos_alternativos": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/EYxP44-3ubNKtKjt_IA4XckB7hqNtqRJXK3dOSPD2T0GXQ",
+    #"contactos_alternativos": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/EYxP44-3ubNKtKjt_IA4XckB7hqNtqRJXK3dOSPD2T0GXQ",
     "disparo": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/Ec7XjRxRB3lPgFsQvtqH5m0B0PpKUSTASOqyjhkKT_VBHw",
     "mails": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/ER0Hli50zIBKuGIFyLPBv3IBPn1y0eKo3GBZhDshO-DqMw"
 }
@@ -74,5 +74,5 @@ def get_paths():
         "disparo": cargar_excel_desde_onedrive(onedrive_urls["disparo"], "disparo.xlsx", access_token),
         "mails": cargar_excel_desde_onedrive(onedrive_urls["mails"], "mails.xlsx", access_token),
         "log": "log_envios_historico_CL_May.csv",
-        "alternativos": cargar_excel_desde_onedrive(onedrive_urls["contactos_alternativos"], "contactos_alt.xlsx", access_token)
+        #"alternativos": cargar_excel_desde_onedrive(onedrive_urls["contactos_alternativos"], "contactos_alt.xlsx", access_token)
     }
