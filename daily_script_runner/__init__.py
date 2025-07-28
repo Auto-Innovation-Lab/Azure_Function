@@ -8,11 +8,11 @@ SCRIPTS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Sc
 if SCRIPTS_PATH not in sys.path:
     sys.path.append(SCRIPTS_PATH)
 
-# Importar la función principal del script
 try:
     from main import main as ejecutar_main
 except ImportError as e:
-    raise ImportError(f"❌ No se pudo importar 'main' desde Scripts-Disparos-main: {e}")
+    logging.error(f"❌ No se pudo importar 'main' desde Scripts-Disparos-main: {e}")
+    raise
 
 def main(mytimer: func.TimerRequest) -> None:
     logging.info("⏰ Ejecutando rutina diaria desde Azure Function...")
