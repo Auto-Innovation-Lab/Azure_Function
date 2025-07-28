@@ -14,22 +14,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install dependencies and prepare function_app folder
+      - name: 📦 Install dependencies and prepare function_app folder
         run: |
           mkdir -p function_app
           python -m pip install --upgrade pip
           pip install -r requirements.txt -t function_app
           rsync -av --exclude=function_app ./ function_app/
 
-      - name: Deploy to Azure Function App
+      - name: 🚀 Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
           app-name: 'spareparts-pricing'
