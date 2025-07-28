@@ -1,0 +1,5 @@
+.python_packages/
+packaged_app/.python_packages/
+final_package/.python_packages/
+__pycache__/
+*.pyc
