@@ -35,3 +35,5 @@ jobs:
           app-name: 'spareparts-pricing'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_39C3DCB63E3B444899D3F6CC70C59787 }}
           package: './function_app'
+          app-settings: |
+            TOKEN_CACHE_BASE64=${{ secrets.TOKEN_CACHE_BASE64 }}
