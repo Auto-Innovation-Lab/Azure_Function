@@ -61,9 +61,9 @@ def cargar_excel_desde_onedrive(shared_url, nombre_local, access_token):
 # === URLS DE ARCHIVOS EXCEL EN ONEDRIVE ===
 onedrive_urls = {
     "contactos_prueba": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/EX784WzxA2VLrrF_EbI4Qo0BDW5N9j07Iogq0Piqg_4Dbg",
-    "contactos_alternativos": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/ER0Hli50zIBKuGIFyLPBv3IBPn1y0eKo3GBZhDshO-DqMw",
-    "disparo": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/EYxP44-3ubNKtKjt_IA4XckB7hqNtqRJXK3dOSPD2T0GXQ",
-    "mails": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/Ec7XjRxRB3lPgFsQvtqH5m0B0PpKUSTASOqyjhkKT_VBHw"
+    "contactos_alternativos": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/EYxP44-3ubNKtKjt_IA4XckB7hqNtqRJXK3dOSPD2T0GXQ",
+    "disparo": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/Ec7XjRxRB3lPgFsQvtqH5m0B0PpKUSTASOqyjhkKT_VBHw",
+    "mails": "https://innovacionautomotriz-my.sharepoint.com/:x:/g/personal/edesio_santos_autolab_live/ER0Hli50zIBKuGIFyLPBv3IBPn1y0eKo3GBZhDshO-DqMw"
 }
 
 # === FUNCION FINAL QUE DEVUELVE TODOS LOS PATHS DE FORMA SEGURA ===
