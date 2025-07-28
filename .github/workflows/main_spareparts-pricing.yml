@@ -6,15 +6,13 @@ on:
       - main
     paths:
       - '**.py'
-      - '**.json'
       - 'requirements.txt'
       - '.github/workflows/**'
-  workflow_dispatch:
+  workflow_dispatch:  # Permite ejecución manual desde GitHub UI
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -22,15 +20,15 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.10'  # Usa 3.10 si ya lo confirmaste en Azure
 
-      - name: Install dependencies to .python_packages
+      - name: Install dependencies
         run: |
-          pip install -r requirements.txt --target="./Scripts-Disparos-main/.python_packages/lib/site-packages"
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
 
       - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
           app-name: spareparts-pricing
-          package: ./Scripts-Disparos-main
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_39C3DCB63E3B444899D3F6CC70C59787 }}
