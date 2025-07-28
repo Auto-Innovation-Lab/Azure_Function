@@ -8,7 +8,7 @@ on:
       - '**.py'
       - 'requirements.txt'
       - '.github/workflows/**'
-  workflow_dispatch:
+  workflow_dispatch:  # Permite ejecución manual desde GitHub UI
 
 jobs:
   build-and-deploy:
@@ -29,9 +29,8 @@ jobs:
           mkdir -p packaged_app
           pip install -r requirements.txt --target=packaged_app/.python_packages/lib/site-packages
 
-          # Copiar todos los archivos salvo la carpeta de destino, el .git y .github
-          shopt -s extglob
-          cp -r !(packaged_app|.git|.github) packaged_app
+          # Copiar carpetas necesarias al paquete (ajustar si agregas más)
+          cp -r daily_script_runner Scripts-Disparos-main requirements.txt packaged_app/
 
       - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
