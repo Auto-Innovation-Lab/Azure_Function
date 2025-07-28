@@ -12,6 +12,13 @@ CACHE_PATH = "/tmp/token_cache.json"
 
 # === OBTENER TOKEN DE ACCESO DESDE CACHÉ O NUEVO ===
 def obtener_token():
+    # ⏳ Intenta restaurar desde variable de entorno si no existe archivo
+    if not os.path.exists(CACHE_PATH):
+        contenido_cache = os.environ.get("TOKEN_CACHE_BASE64")
+        if contenido_cache:
+            with open(CACHE_PATH, "w") as f:
+                f.write(base64.b64decode(contenido_cache).decode("utf-8"))
+
     cache = SerializableTokenCache()
     if os.path.exists(CACHE_PATH):
         with open(CACHE_PATH, "r") as f:
