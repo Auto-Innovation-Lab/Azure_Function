@@ -1,0 +1,11 @@
+# Ignorar paquetes instalados localmente
+.python_packages/
+packaged_app/.python_packages/
+final_package/.python_packages/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+
+# Archivos zip
+*.zip
