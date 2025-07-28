@@ -4,7 +4,7 @@ import random
 import time
 
 from funciones_utiles import *
-from config import paths
+from config import get_paths  # ✅ CAMBIO AQUÍ
 
 def main():
     logging.info("🚀 Entrando a main.py")
@@ -12,6 +12,7 @@ def main():
     try:
         # 1. Cargar y filtrar datos
         logging.info("📥 Cargando datos desde OneDrive...")
+        paths = get_paths()  # ✅ CAMBIO AQUÍ
         df_contactos, df_links = cargar_datos(paths)
 
         logging.info(f"🔎 Contactos cargados: {len(df_contactos)}, Links cargados: {len(df_links)}")
