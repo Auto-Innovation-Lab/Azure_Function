@@ -7,12 +7,14 @@ on:
     paths:
       - '**.py'
       - '**.json'
+      - 'requirements.txt'
       - '.github/workflows/**'
-  workflow_dispatch:  # 👈 Permite ejecución manual desde GitHub UI
+  workflow_dispatch:  # Permite ejecución manual desde GitHub UI
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -20,16 +22,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'  # Usa 3.10 como se vio en tu entorno
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
-          cd daily_script_runner
-          pip install -r ../requirements.txt --target=".python_packages/lib/site-packages"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --target="./daily_script_runner/.python_packages/lib/site-packages"
 
       - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
           app-name: spareparts-pricing
-          package: daily_script_runner
+          package: ./daily_script_runner
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_39C3DCB63E3B444899D3F6CC70C59787 }}
