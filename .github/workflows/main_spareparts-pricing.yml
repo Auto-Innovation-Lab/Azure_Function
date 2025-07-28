@@ -8,7 +8,7 @@ on:
       - '**.py'
       - 'requirements.txt'
       - '.github/workflows/**'
-  workflow_dispatch:  # 👈 Ejecutable manualmente desde GitHub UI
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -28,8 +28,8 @@ jobs:
           python -m pip install --upgrade pip
           mkdir -p packaged_app
           pip install -r requirements.txt --target=packaged_app/.python_packages/lib/site-packages
-          
-          # Evitar copiar .git o la carpeta packaged_app dentro de sí misma
+
+          # Copiar todos los archivos salvo la carpeta de destino, el .git y .github
           shopt -s extglob
           cp -r !(packaged_app|.git|.github) packaged_app
 
