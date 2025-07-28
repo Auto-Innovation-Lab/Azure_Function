@@ -7,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 
 # Carga y filtrado de datos
 def cargar_datos(paths):
-    df_contactos = pd.read_excel(paths['contactos'], sheet_name='CL (GM)', header=1)
+    df_contactos = pd.read_excel(paths['contactos'], sheet_name='GM CL', header=1)
     df_links = pd.read_excel(paths['disparo'], sheet_name='CL', header=2)
     return df_contactos, df_links
 
