@@ -27,7 +27,9 @@ jobs:
           python -m pip install --upgrade pip
           mkdir -p packaged_app
           pip install -r requirements.txt --target="packaged_app/.python_packages/lib/site-packages"
-          cp -r * packaged_app
+          shopt -s extglob
+          cp -r !(packaged_app) packaged_app
+
 
       - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
