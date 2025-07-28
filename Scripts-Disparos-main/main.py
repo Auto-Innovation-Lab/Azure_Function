@@ -1,93 +1,107 @@
-from funciones_utiles import *
-from config import paths
+import logging
 import pandas as pd
 import random
 import time
 
-# 1. Cargar y filtrar datos
-df_contactos, df_links = cargar_datos(paths)
-df_links, df_contactos = filtrar_datos(df_links, df_contactos)
-remitentes = cargar_remitentes(paths['mails'])
-rotador = RotadorRemitentes(remitentes)
+from funciones_utiles import *
+from config import paths
 
-# 2. Set para evitar duplicados por sesión
-correos_enviados = set()
-enlaces_usados = set()
-log_envios = []
+def main():
+    logging.info("🚀 Entrando a main.py")
 
-# 3. Agrupar links por dominio
-for _, row in df_links.iterrows():
-    dominio = str(row['Dominio']).lower().replace("www.", "").strip()
-    descripcion = row['Descripcion']
-    enlace = row['Enlace']
+    try:
+        # 1. Cargar y filtrar datos
+        logging.info("📥 Cargando datos desde OneDrive...")
+        df_contactos, df_links = cargar_datos(paths)
 
-    # Buscar contacto más parecido
-    match = dominio_mas_parecido(dominio, df_contactos['Cluster'].str.lower().tolist(), umbral=0.5)
-    if not match:
-        continue
+        logging.info(f"🔎 Contactos cargados: {len(df_contactos)}, Links cargados: {len(df_links)}")
+        df_links, df_contactos = filtrar_datos(df_links, df_contactos)
 
-    coincidente = df_contactos[df_contactos['Cluster'].str.lower() == match]
-    if coincidente.empty:
-        print(f"⚠️ Coincidencia '{match}' no tiene contacto asociado. Dominio original: {dominio}")
-        continue
+        remitentes = cargar_remitentes(paths['mails'])
+        rotador = RotadorRemitentes(remitentes)
 
-    contacto = coincidente.iloc[0]
-    correo_contacto = contacto['Mail']
+        correos_enviados = set()
+        enlaces_usados = set()
+        log_envios = []
 
-    # Evitar enviar dos veces al mismo contacto
-    if correo_contacto in correos_enviados:
-        continue
+        logging.info("📬 Comenzando envío de correos...")
 
-    # Buscar hasta 4 links del mismo dominio
-    #mismos = df_links[df_links['Dominio'].str.lower().str.contains(match, na=False)].sample(n=random.randint(1, 4), replace=False)
-    coincidentes = df_links[df_links['Dominio'].str.lower().str.contains(match, na=False) & ~df_links['Enlace'].isin(enlaces_usados)]
+        for _, row in df_links.iterrows():
+            dominio = str(row['Dominio']).lower().replace("www.", "").strip()
+            descripcion = row['Descripcion']
+            enlace = row['Enlace']
 
-    if coincidentes.empty:
-        print(f"⚠️ No se encontraron dominios que coincidan con: {match}")
-        continue  # ← esto evita el crash
+            match = dominio_mas_parecido(dominio, df_contactos['Cluster'].str.lower().tolist(), umbral=0.5)
+            if not match:
+                continue
 
-    n_links = min(len(coincidentes), random.randint(1, 4))
-    mismos = coincidentes.sample(n=n_links, replace=False)
-    enlaces_usados.update(mismos['Enlace'].tolist())
+            coincidente = df_contactos[df_contactos['Cluster'].str.lower() == match]
+            if coincidente.empty:
+                logging.warning(f"⚠️ Coincidencia '{match}' no tiene contacto. Dominio: {dominio}")
+                continue
 
-    
+            contacto = coincidente.iloc[0]
+            correo_contacto = contacto['Mail']
 
-    productos = []
-    for _, r in mismos.iterrows():
-        productos.append({
-            'descripcion': r['Descripcion'],
-            'enlace': r['Enlace']
-        })
+            if correo_contacto in correos_enviados:
+                continue
 
-    cuerpo = generar_cuerpo(productos)
-    asuntos = [
-    "Cotización de repuestos en su web",
-    "Consulta precios",
-    "Necesitamos cotizar estos repuestos en su pagina",
-    "Cotizacion productos",
-    "Duda repuestos de su pagina web",
-    "Productos vistos en su sitio web"
-    ]
-    asunto = random.choice(asuntos)
-    remitente = rotador.siguiente()
+            coincidentes = df_links[
+                df_links['Dominio'].str.lower().str.contains(match, na=False) &
+                ~df_links['Enlace'].isin(enlaces_usados)
+            ]
 
-    # Enviar
-    enviar_correo(remitente, correo_contacto, asunto, cuerpo)
+            if coincidentes.empty:
+                logging.warning(f"⚠️ No se encontraron links coincidentes con dominio: {match}")
+                continue
 
-    # Guardar en log
-    log_envios.append({
-        'Remitente': remitente['correo'],
-        'Receptor': correo_contacto,
-        'Cluster': match,
-        'Cantidad Links': len(productos),
-        'Descripcion Primer Link': productos[0]['descripcion']
-    })
+            n_links = min(len(coincidentes), random.randint(1, 4))
+            mismos = coincidentes.sample(n=n_links, replace=False)
+            enlaces_usados.update(mismos['Enlace'].tolist())
 
-    correos_enviados.add(correo_contacto)
+            productos = []
+            for _, r in mismos.iterrows():
+                productos.append({
+                    'descripcion': r['Descripcion'],
+                    'enlace': r['Enlace']
+                })
 
-    espera = random.uniform(5, 10)
-    time.sleep(espera)
+            cuerpo = generar_cuerpo(productos)
+            asuntos = [
+                "Cotización de repuestos en su web",
+                "Consulta precios",
+                "Necesitamos cotizar estos repuestos en su pagina",
+                "Cotizacion productos",
+                "Duda repuestos de su pagina web",
+                "Productos vistos en su sitio web"
+            ]
+            asunto = random.choice(asuntos)
+            remitente = rotador.siguiente()
 
-# 4. Guardar log
-df_log = pd.DataFrame(log_envios)
-guardar_log(df_log, paths['log'])
+            logging.info(f"📧 Enviando a {correo_contacto} con {len(productos)} productos.")
+            enviar_correo(remitente, correo_contacto, asunto, cuerpo)
+
+            log_envios.append({
+                'Remitente': remitente['correo'],
+                'Receptor': correo_contacto,
+                'Cluster': match,
+                'Cantidad Links': len(productos),
+                'Descripcion Primer Link': productos[0]['descripcion']
+            })
+
+            correos_enviados.add(correo_contacto)
+
+            espera = random.uniform(5, 10)
+            logging.info(f"⏳ Esperando {espera:.1f} segundos antes del siguiente envío...")
+            time.sleep(espera)
+
+        # 4. Guardar log
+        logging.info("💾 Guardando log de envíos...")
+        df_log = pd.DataFrame(log_envios)
+        guardar_log(df_log, paths['log'])
+
+        logging.info("✅ Script finalizado correctamente.")
+
+    except Exception as e:
+        logging.error(f"❌ Error en main.py: {e}")
+        raise
