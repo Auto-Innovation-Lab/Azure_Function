@@ -19,7 +19,7 @@ try:
 except Exception as e:
     logging.error(f"❌ Error leyendo las hojas del archivo Excel: {e}")
     raise
-    df_contactos = pd.read_excel(paths['contactos'], sheet_name='GM CL', header=1)
+    df_contactos = pd.read_excel(paths['contactos'], sheet_name='CL (GM)', header=1)
     df_links = pd.read_excel(paths['disparo'], sheet_name='CL', header=2)
     return df_contactos, df_links
 
