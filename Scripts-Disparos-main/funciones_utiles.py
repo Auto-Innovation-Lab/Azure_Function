@@ -24,7 +24,7 @@ except Exception as e:
     return df_contactos, df_links
 
 def filtrar_datos(df_links, df_contactos):
-    df_links = df_links[df_links['Ola'] == 3].copy()
+    # df_links = df_links[df_links['Ola'] == 3].copy()
     df_links = df_links[df_links['Precio c/IVA'].isna()].copy() 
     df_contactos = df_contactos[df_contactos['Marca'].str.lower() == 'zlink'].copy()
     return df_links, df_contactos
