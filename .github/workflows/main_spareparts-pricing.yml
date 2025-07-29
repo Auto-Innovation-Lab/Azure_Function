@@ -27,7 +27,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           mkdir -p final_package/.python_packages/lib/site-packages
-          pip install -r final_package/requirements.txt \
+          pip install --only-binary=:all: --upgrade -r final_package/requirements.txt \
             --target=final_package/.python_packages/lib/site-packages \
             --no-cache-dir
 
