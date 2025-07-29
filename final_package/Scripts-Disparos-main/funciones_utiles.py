@@ -2,26 +2,27 @@ import pandas as pd
 import random
 import difflib
 import smtplib
+import openpyxl
+import logging
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # Carga y filtrado de datos
 def cargar_datos(paths):
-    import openpyxl
-import logging
+    # Abrir el archivo descargado desde OneDrive
+    try:
+        wb = openpyxl.load_workbook(paths['contactos'], read_only=True)
+        hojas = wb.sheetnames
+        logging.info(f"📄 Hojas encontradas en el archivo de contactos: {hojas}")
+        wb.close()
+    except Exception as e:
+        logging.error(f"❌ Error leyendo las hojas del archivo Excel: {e}")
+        raise
 
-# Abrir el archivo descargado desde OneDrive
-try:
-    wb = openpyxl.load_workbook(paths['contactos'], read_only=True)
-    hojas = wb.sheetnames
-    logging.info(f"📄 Hojas encontradas en el archivo de contactos: {hojas}")
-    wb.close()
-except Exception as e:
-    logging.error(f"❌ Error leyendo las hojas del archivo Excel: {e}")
-    raise
     df_contactos = pd.read_excel(paths['contactos'], sheet_name='CL (GM)', header=1)
     df_links = pd.read_excel(paths['disparo'], sheet_name='CL', header=2)
     return df_contactos, df_links
+
 
 def filtrar_datos(df_links, df_contactos):
     # df_links = df_links[df_links['Ola'] == 3].copy()
@@ -65,6 +66,7 @@ def dominio_mas_parecido(dominio, lista_clusters, umbral=0.8):
     coincidencias = difflib.get_close_matches(dominio, lista_clusters, n=1, cutoff=umbral)
     return coincidencias[0] if coincidencias else None
 
+
 # Generación del cuerpo del correo
 def generar_cuerpo(productos):
     saludos = [
@@ -80,7 +82,6 @@ def generar_cuerpo(productos):
         "Necesito una cotizacion formal para estos repuestos que vi en su sitio:",
         "Comparto el detalle de los repuestos encontrados en su web, queria saber si presencialmente es el mismo valor:",
         "Quiero cotizar los siguientes productos publicados en su web, podria mandarme una cotizacion formal de estos productos:",
-    
     ]
 
     despedidas = [
@@ -116,6 +117,7 @@ def generar_cuerpo(productos):
 """
     return cuerpo
 
+
 # Envío del correo
 def enviar_correo(remitente_info, destinatario, asunto, cuerpo):
     try:
@@ -136,9 +138,7 @@ def enviar_correo(remitente_info, destinatario, asunto, cuerpo):
     except Exception as e:
         print(f"❌ Error enviando a {destinatario}: {e}")
 
+
 # Guardar log
 def guardar_log(df_log, path):
     df_log.to_csv(path, index=False)
-
-
-
