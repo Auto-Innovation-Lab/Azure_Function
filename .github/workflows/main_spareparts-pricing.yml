@@ -43,3 +43,4 @@ jobs:
           app-name: spareparts-pricing
           package: packaged_app
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_39C3DCB63E3B444899D3F6CC70C59787 }}
+
