@@ -140,5 +140,5 @@ def enviar_correo(remitente_info, destinatario, asunto, cuerpo):
 
 
 # Guardar log
-def guardar_log(df_log, path):
-    df_log.to_csv(path, index=False)
+# def guardar_log(df_log, path):
+  #  df_log.to_csv(path, index=False)
