@@ -139,6 +139,6 @@ def enviar_correo(remitente_info, destinatario, asunto, cuerpo):
         print(f"❌ Error enviando a {destinatario}: {e}")
 
 
-#Guardar log
+Guardar log
 #def guardar_log(df_log, path):
-    #df_log.to_csv(path, index=False)
+    df_log.to_csv(path, index=False)
