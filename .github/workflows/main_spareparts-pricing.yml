@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - '**.py'
-      - 'requirements.txt'
+      - 'final_package/requirements.txt'
       - '.github/workflows/**'
   workflow_dispatch:
 
@@ -15,32 +15,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🧾 Checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: 🐍 Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
-      - name: 📦 Install dependencies and build function package
+      - name: Install dependencies and package app
         run: |
           python -m pip install --upgrade pip
           mkdir -p packaged_app/.python_packages/lib/site-packages
+          pip install -r final_package/requirements.txt --target=packaged_app/.python_packages/lib/site-packages --no-cache-dir
 
-          # Instalar dependencias directamente en carpeta empaquetada
-          pip install -r requirements.txt \
-            --target=packaged_app/.python_packages/lib/site-packages \
-            --no-cache-dir
-
-          # Copiar todos los archivos de la raíz, excepto carpetas no deseadas
+          # Copiar el contenido de final_package excepto carpetas innecesarias
           shopt -s extglob
-          cp -r !(packaged_app|.git|.github|__pycache__|.venv|*.zip) packaged_app/
+          cp -r final_package/* packaged_app/
 
-      - name: ☁️ Deploy to Azure Function App
+      - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
           app-name: spareparts-pricing
           package: packaged_app
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_39C3DCB63E3B444899D3F6CC70C59787 }}
-
