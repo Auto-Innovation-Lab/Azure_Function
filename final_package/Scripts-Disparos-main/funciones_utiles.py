@@ -139,6 +139,7 @@ def enviar_correo(remitente_info, destinatario, asunto, cuerpo):
         print(f"❌ Error enviando a {destinatario}: {e}")
 
 
-Guardar log
-#def guardar_log(df_log, path):
-    df_log.to_csv(path, index=False)
+def guardar_log(df_log, path):
+    # 🔒 Azure Function tiene sistema de archivos solo lectura, no se guarda log local
+    # df_log.to_csv(path, index=False)
+    print("ℹ️ Log omitido por sistema de solo lectura.")
