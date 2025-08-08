@@ -8,13 +8,16 @@ from msal import PublicClientApplication, SerializableTokenCache
 CLIENT_ID = "5d526496-c347-49e5-9f30-974b9f03de6d"
 AUTHORITY = "https://login.microsoftonline.com/common"
 SCOPES = ["Files.Read.All"]
-import platform
 import os
+import base64
 
-if platform.system() == "Windows":
-    CACHE_PATH = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Temp", "token_cache.json")
-else:
+# Primero intenta recuperar desde entorno (Function)
+if os.environ.get("TOKEN_CACHE_BASE64"):
     CACHE_PATH = "/tmp/token_cache.json"
+else:
+    # En entorno local (como tu VM), lo guardas cerca de config.py
+    CACHE_PATH = os.path.join(os.path.dirname(__file__), "token_cache.json")
+
 
 # === OBTENER TOKEN DE ACCESO DESDE CACHÉ O NUEVO ===
 def obtener_token():
@@ -82,4 +85,5 @@ def get_paths():
         "log": "log_envios_historico_CL_May.csv",
         #"alternativos": cargar_excel_desde_onedrive(onedrive_urls["contactos_alternativos"], "contactos_alt.xlsx", access_token)
     }
+
 
