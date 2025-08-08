@@ -8,7 +8,13 @@ from msal import PublicClientApplication, SerializableTokenCache
 CLIENT_ID = "5d526496-c347-49e5-9f30-974b9f03de6d"
 AUTHORITY = "https://login.microsoftonline.com/common"
 SCOPES = ["Files.Read.All"]
-CACHE_PATH = "/tmp/token_cache.json"
+import platform
+import os
+
+if platform.system() == "Windows":
+    CACHE_PATH = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Temp", "token_cache.json")
+else:
+    CACHE_PATH = "/tmp/token_cache.json"
 
 # === OBTENER TOKEN DE ACCESO DESDE CACHÉ O NUEVO ===
 def obtener_token():
@@ -76,3 +82,4 @@ def get_paths():
         "log": "log_envios_historico_CL_May.csv",
         #"alternativos": cargar_excel_desde_onedrive(onedrive_urls["contactos_alternativos"], "contactos_alt.xlsx", access_token)
     }
+
