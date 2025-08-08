@@ -10,13 +10,15 @@ AUTHORITY = "https://login.microsoftonline.com/common"
 SCOPES = ["Files.Read.All"]
 import os
 import base64
+import platform
 
-# Primero intenta recuperar desde entorno (Function)
+# === DEFINICIÓN DINÁMICA DEL CACHE_PATH ===
 if os.environ.get("TOKEN_CACHE_BASE64"):
     CACHE_PATH = "/tmp/token_cache.json"
 else:
-    # En entorno local (como tu VM), lo guardas cerca de config.py
+    # Guarda token_cache.json junto a main.py (dentro de Scripts-Disparos-main)
     CACHE_PATH = os.path.join(os.path.dirname(__file__), "token_cache.json")
+
 
 
 # === OBTENER TOKEN DE ACCESO DESDE CACHÉ O NUEVO ===
@@ -85,5 +87,6 @@ def get_paths():
         "log": "log_envios_historico_CL_May.csv",
         #"alternativos": cargar_excel_desde_onedrive(onedrive_urls["contactos_alternativos"], "contactos_alt.xlsx", access_token)
     }
+
 
 
